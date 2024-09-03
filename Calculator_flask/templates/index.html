@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./static/index.css">
+</head>
+<body>
+    <form action="/calculate" method="post">
+        <input type="text" name="firstNumber" placeholder="First number">
+        <input type="text" name="secondNumber" placeholder="Second number">
+        <select name="operation">
+            <option value="add">Add</option>
+            <option value="subtract">Subtract</option>
+            <option value="multiply">Multiply</option>
+            <option value="divide">Divide</option>
+        </select>
+        <button type="submit">Calculate</button>
+
+{% if result is not none %} 
+<h2> result: {{result}}</h2>  
+{% endif %}
+
+</body>
+</html>
