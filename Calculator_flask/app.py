@@ -19,7 +19,7 @@ def calculate():
         result=num1*num2
     elif ops =="divide":
         result=num1/num2
-    elif (num1==Null or num2==Null):
+    elif (num1 is None or num2 is None):
         result="please enter the numbers"
     else:
         result="invalid operation"
