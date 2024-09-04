@@ -44,6 +44,6 @@ jobs:
       - name: Check Tag
         run: |
           CURRENT_TAG = $(git tag --sort=-v:refname | head -n 1)
-          echo "Current tag is: ${ CURRENT_TAG }"
+          echo "Current tag is: ${{ CURRENT_TAG }}"
           echo "Git Tag is: ${{ vars.GIT_TAG }}
           
