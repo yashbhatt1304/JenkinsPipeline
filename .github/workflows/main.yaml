@@ -34,11 +34,35 @@ jobs:
           echo "-------Building application-------"
 
   deploy:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       
+      - name: Check for Tag using GitHub Script
+        id: check_tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const tagName = 'v1.0.0';  // Replace with the tag you want to check
+            try {
+              const tag = await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `tags/${tagName}`,
+            });
+            console.log(`Tag ${tagName} exists:`, tag.data);
+            core.setOutput('tag_exists', 'true');
+            } catch (error) {
+            if (error.status === 404) {
+              console.log(`Tag ${tagName} does not exist`);
+              core.setOutput('tag_exists', 'false');
+            } else {
+              throw error;
+            }
+            }
+
       - name: SSH into EC2 and Installing Libraries
         uses: appleboy/ssh-action@v1.0.0
         with:
