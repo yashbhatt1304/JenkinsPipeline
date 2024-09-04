@@ -73,7 +73,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checking Poduction Release & Configuring libraries
-        run: echo "-------This is New Release preparing for production rollout.-------- "
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -81,6 +80,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
+            echo "-------This is New Release preparing for production rollout.-------- "
             sudo apt-get update
             sudo apt update
             sudo apt install python -y
@@ -90,7 +90,6 @@ jobs:
             pip install flask pytest
 
       - name: Deploying App in PROD
-        run: echo "Deploying App in PROD"
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -100,6 +99,7 @@ jobs:
           source: ./
           target: ./
           script: |
+            echo "Deploying App in PROD"
             sudo rm -rf  /etc/nginx/sites-available/default
             sudo cp /home/ubuntu/default /etc/nginx/sites-available/
             sudo systemctl restart nginx
@@ -112,8 +112,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checking Stage Release & Configuring libraries
-        if: steps.check_tag.outputs.tag_exists == 'false'
-        run: echo "-------This is New Release preparing for stage rollout.-------- "
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST_STG }}
@@ -121,6 +119,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY_STG }}
           port: 22
           script: |
+            echo "-------This is New Release preparing for stage rollout.-------- "
             sudo apt-get update
             sudo apt update
             sudo apt install python -y
@@ -130,8 +129,6 @@ jobs:
             pip install flask pytest
 
       - name: Deploying App in STAGE
-        if: steps.check_tag.outputs.tag_exists == 'false'
-        run: echo "Deploying App in STAGE"
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST_STG }}
@@ -141,6 +138,7 @@ jobs:
           source: ./
           target: ./
           script: |
+            echo "Deploying App in STAGE"
             sudo rm -rf  /etc/nginx/sites-available/default
             sudo cp /home/ubuntu/default /etc/nginx/sites-available/
             sudo systemctl restart nginx
