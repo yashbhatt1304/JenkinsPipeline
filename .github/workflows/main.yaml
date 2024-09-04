@@ -77,7 +77,8 @@ jobs:
             sudo apt-get update
             sudo apt update
             sudo apt install python
-            curl -sS https://bootstrap.pypa.io/get-pip.py | python
+            curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+            sudo apt install python3-pip
             pip install flask pytest
 
       - name: Copy code to EC2 & Run the application
