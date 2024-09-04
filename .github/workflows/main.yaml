@@ -33,3 +33,13 @@ jobs:
       - name: Build Application
         run: |
           echo "Building application..."
+
+  generate_tag:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check Tag
+        run: |
+          CURRENT_TAG = "git tag --sort=-v:refname | head -n 1"
+          echo "Current tag is: $CURRENT_TAG"
+          
