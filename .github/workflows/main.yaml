@@ -35,31 +35,6 @@ jobs:
         run: |
           echo "-------Building application-------"
 
-      - name: SSH into EC2 and Prepare Target Directory
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            sudo apt-get update
-            sudo apt update
-            sudo apt install python
-            curl -sS https://bootstrap.pypa.io/get-pip.py | python
-            pip3 install flask pytest
-      - name: Copy code to EC2
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          source: ./
-          target: ./
-          script: |
-            sudo python3 ./JenkinsPipeline/Calculator_flask/app.py
-
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -90,4 +65,31 @@ jobs:
       - name: Deploy to Production
         run: |
           echo "--------Deploying to Production-------"
+      
+      - name: SSH into EC2 and Installing Libraries
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            sudo apt-get update
+            sudo apt update
+            sudo apt install python
+            curl -sS https://bootstrap.pypa.io/get-pip.py | python
+            pip install flask pytest
+
+      - name: Copy code to EC2 & Run the application
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: ./
+          target: ./
+          script: |
+            sudo python3 ./JenkinsPipeline/Calculator_flask/app.py
+
           
