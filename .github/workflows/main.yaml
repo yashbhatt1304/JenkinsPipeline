@@ -67,12 +67,12 @@ jobs:
               }
             }
 
-  deploy:
+  prod_deploy:
+    if: steps.check_tag.outputs.tag_exists == 'true'
     needs: [test, check_tag]
     runs-on: ubuntu-latest
     steps:
       - name: Checking Poduction Release & Configuring libraries
-        if: steps.check_tag.outputs.tag_exists == 'true'
         run: echo "-------This is New Release preparing for production rollout.-------- "
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -88,7 +88,29 @@ jobs:
             sudo apt install python3-pip -y
             sudo apt install nginx -y
             pip install flask pytest
-      
+
+      - name: Deploying App in PROD
+        run: echo "Deploying App in PROD"
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: ./
+          target: ./
+          script: |
+            sudo rm -rf  /etc/nginx/sites-available/default
+            sudo cp /home/ubuntu/default /etc/nginx/sites-available/
+            sudo systemctl restart nginx
+            cd /home/ubuntu/Calculator_flask/
+            python3 -m flask run
+
+  stage-deploy:
+    if: steps.check_tag.outputs.tag_exists == 'true'
+    needs: [test, check_tag]
+    runs-on: ubuntu-latest
+    steps:
       - name: Checking Stage Release & Configuring libraries
         if: steps.check_tag.outputs.tag_exists == 'false'
         run: echo "-------This is New Release preparing for stage rollout.-------- "
@@ -107,24 +129,6 @@ jobs:
             sudo apt install nginx -y
             pip install flask pytest
 
-      - name: Deploying App in PROD
-        if: steps.check_tag.outputs.tag_exists == 'true'
-        run: echo "Deploying App in PROD"
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          source: ./
-          target: ./
-          script: |
-            sudo rm -rf  /etc/nginx/sites-available/default
-            sudo cp /home/ubuntu/default /etc/nginx/sites-available/
-            sudo systemctl restart nginx
-            cd /home/ubuntu/Calculator_flask/
-            python3 -m flask run
-
       - name: Deploying App in STAGE
         if: steps.check_tag.outputs.tag_exists == 'false'
         run: echo "Deploying App in STAGE"
@@ -142,6 +146,7 @@ jobs:
             sudo systemctl restart nginx
             cd /home/ubuntu/Calculator_flask/
             python3 -m flask run
+
 
       
 
