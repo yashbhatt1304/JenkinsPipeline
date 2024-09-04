@@ -6,7 +6,7 @@ on:
       - staging
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -33,8 +33,8 @@ jobs:
         run: |
           echo "-------Building application-------"
 
-  deploy:
-    needs: [build]
+  check_tag:
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -45,25 +45,35 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const tagName = 'v1.0.0';  // Replace with the tag you want to check
+            const tagName = '${{vars.GIT_TAG}}';
             try {
               const tag = await github.rest.git.getRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `tags/${tagName}`,
-            });
-            console.log(`Tag ${tagName} exists:`, tag.data);
-            core.setOutput('tag_exists', 'true');
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tagName}`,
+              });
+              console.log(`Tag ${tagName} exists:`, tag.data);
+              if (tag.data.refs == tagName) {
+                core.setOutput('tag_exists', 'true');
+              } else {
+                core.setOutput('tag_exists', 'false');
+              }
             } catch (error) {
-            if (error.status === 404) {
-              console.log(`Tag ${tagName} does not exist`);
-              core.setOutput('tag_exists', 'false');
-            } else {
-              throw error;
-            }
+              if (error.status === 404) {
+                console.log(`Tag ${tagName} does not exist`);
+                core.setOutput('tag_exists', 'false');
+              } else {
+                throw error;
+              }
             }
 
-      - name: SSH into EC2 and Installing Libraries
+  deploy:
+    needs: [test, check_tag]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking Poduction Release & Configuring libraries
+        if: steps.check_tag.outputs.tag_exists == 'true'
+        run: echo "-------This is New Release preparing for production rollout.-------- "
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -78,13 +88,51 @@ jobs:
             sudo apt install python3-pip -y
             sudo apt install nginx -y
             pip install flask pytest
+      
+      - name: Checking Stage Release & Configuring libraries
+        if: steps.check_tag.outputs.tag_exists == 'false'
+        run: echo "-------This is New Release preparing for stage rollout.-------- "
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST_STG }}
+          username: ${{ secrets.EC2_USERNAME_STG }}
+          key: ${{ secrets.EC2_SSH_KEY_STG }}
+          port: 22
+          script: |
+            sudo apt-get update
+            sudo apt update
+            sudo apt install python -y
+            curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+            sudo apt install python3-pip -y
+            sudo apt install nginx -y
+            pip install flask pytest
 
-      - name: Configuring Nginx and Running Calculator Application
+      - name: Deploying App in PROD
+        if: steps.check_tag.outputs.tag_exists == 'true'
+        run: echo "Deploying App in PROD"
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: ./
+          target: ./
+          script: |
+            sudo rm -rf  /etc/nginx/sites-available/default
+            sudo cp /home/ubuntu/default /etc/nginx/sites-available/
+            sudo systemctl restart nginx
+            cd /home/ubuntu/Calculator_flask/
+            python3 -m flask run
+
+      - name: Deploying App in STAGE
+        if: steps.check_tag.outputs.tag_exists == 'false'
+        run: echo "Deploying App in STAGE"
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST_STG }}
+          username: ${{ secrets.EC2_USERNAME_STG }}
+          key: ${{ secrets.EC2_SSH_KEY_STG }}
           port: 22
           source: ./
           target: ./
