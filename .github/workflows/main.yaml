@@ -82,7 +82,7 @@ jobs:
             sudo apt install nginx -y
             pip install flask pytest
 
-      - name: Copy code to EC2 & Run the application
+      - name: Configuring Nginx and Running Calculator Application
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -92,21 +92,12 @@ jobs:
           source: ./
           target: ./
           script: |
-            cd /home/ubuntu/Calculator_flask/
-            sudo python3 -m flask run
-
-      - name: Port Forwarding and Restarting Nginx
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
             sudo rm -rf  /etc/nginx/sites-available/default
             sudo cp /home/ubuntu/default /etc/nginx/sites-available/
             sudo systemctl restart nginx
-            echo "Access the Production server on: ${{ secrets.EC2_HOST }}"
+            cd /home/ubuntu/Calculator_flask/
+            sudo python3 -m flask run
+
       
 
           
