@@ -96,7 +96,7 @@ jobs:
             sudo cp /home/ubuntu/default /etc/nginx/sites-available/
             sudo systemctl restart nginx
             cd /home/ubuntu/Calculator_flask/
-            sudo python3 -m flask run
+            python3 -m flask run
 
       
 
