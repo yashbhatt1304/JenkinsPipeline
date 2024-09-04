@@ -91,6 +91,6 @@ jobs:
           source: ./
           target: ./
           script: |
-            sudo python3 ./JenkinsPipeline/Calculator_flask/app.py
+            sudo python3 ./Calculator_flask/app.py
 
           
