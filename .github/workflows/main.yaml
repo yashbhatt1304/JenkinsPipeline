@@ -79,7 +79,7 @@ jobs:
             sudo apt install python -y
             curl -sS https://bootstrap.pypa.io/get-pip.py | python3
             sudo apt install python3-pip -y
-            pip install flask pytest -y
+            pip install flask pytest
 
       - name: Copy code to EC2 & Run the application
         uses: appleboy/scp-action@v0.1.4
