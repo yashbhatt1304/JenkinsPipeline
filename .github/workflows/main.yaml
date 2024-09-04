@@ -76,10 +76,10 @@ jobs:
           script: |
             sudo apt-get update
             sudo apt update
-            sudo apt install python
+            sudo apt install python -y
             curl -sS https://bootstrap.pypa.io/get-pip.py | python3
-            sudo apt install python3-pip
-            pip install flask pytest
+            sudo apt install python3-pip -y
+            pip install flask pytest -y
 
       - name: Copy code to EC2 & Run the application
         uses: appleboy/scp-action@v0.1.4
