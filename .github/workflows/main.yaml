@@ -38,6 +38,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
       - name: Check Tag
         run: |
           CURRENT_TAG = $(git tag --sort=-v:refname | head -n 1)
