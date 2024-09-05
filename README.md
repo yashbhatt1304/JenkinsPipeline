@@ -1,4 +1,9 @@
-# JenkinsPipeline
-1. Install Jenkins on a cloud server(EC2 Server) following the [Jenkins Installation Document](https://www.jenkins.io/doc/book/installing/)
-2. If everything is successful you can check Jenkins is running on port 8080. Open the port and you can access it. 
-> _note:- make sure inbound port 8080 is allowed._
+# CI/CD Pipeline
+
+Hi visitor!!!
+This is a simple **CI/CD pipeline** demonstartion.
+
+This repository will help you create a simple pipeline with **Jenkins** or with **Github Action/Workflows**.
+Navigate to the corresponding branches or found below the links attached for the same.
+* [CI/CD using Jenkins](https://github.com/yashbhatt1304/JenkinsPipeline/tree/jenkins)
+* [CI/CD using Github Workflows](https://github.com/yashbhatt1304/JenkinsPipeline/tree/staging)
