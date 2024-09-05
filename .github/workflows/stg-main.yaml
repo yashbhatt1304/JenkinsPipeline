@@ -2,19 +2,16 @@ name: CI/CD Pipeline
 
 on:
   push:
-    tags:
-      - v1.*
-
-env:
-  TAG_EXISTS: 'false'
+    branches:
+      - staging
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Acknowledging Prod Env
+      - name: Acknowledging Stage Env
         run: |
-          echo "----This change is meant for Production.-----"
+          echo "----This change is meant for Stage.-----"
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -39,20 +36,20 @@ jobs:
       - name: Build Application
         run: |
           echo "-------Building application-------"
-  
-  prod_deploy:
+
+  stage-deploy:
     needs: [test]
     runs-on: ubuntu-latest
     steps:
-      - name: Checking Poduction Release & Configuring libraries
+      - name: Checking Stage Release & Configuring libraries
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST_STG }}
+          username: ${{ secrets.EC2_USERNAME_STG }}
+          key: ${{ secrets.EC2_SSH_KEY_STG }}
           port: 22
           script: |
-            echo "-------This is New Release preparing for production rollout.-------- "
+            echo "-------This is New Release preparing for stage rollout.-------- "
             sudo apt-get update
             sudo apt update
             sudo apt install python -y
@@ -60,21 +57,25 @@ jobs:
             sudo apt install python3-pip -y
             sudo apt install nginx -y
             pip install flask pytest
-       
-      - name: Deploying App in PROD
+
+      - name: Deploying App in STAGE
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST_STG }}
+          username: ${{ secrets.EC2_USERNAME_STG }}
+          key: ${{ secrets.EC2_SSH_KEY_STG }}
           port: 22
           source: ./
           target: ./
           script: |
-            echo "Deploying App in PROD"
+            echo "Deploying App in STAGE"
             sudo rm -rf  /etc/nginx/sites-available/default
             sudo cp /home/ubuntu/default /etc/nginx/sites-available/
             sudo systemctl restart nginx
             cd /home/ubuntu/Calculator_flask/
             python3 -m flask run
-        
+
+
+      
+
+          
