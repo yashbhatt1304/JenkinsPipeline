@@ -27,7 +27,7 @@ To Implement a CI/CD workflow using GitHub Actions for a Python application.
 7. Below are the pipeline steps of deploying new Production release.
 ![Job1](./images/Production_Pipeline_Job1.png)
 ![Job2](./images/Production_Pipeline_Job2.png)
-8. Below are the pipeline steps of deploying new Production release.
+8. Below are the pipeline steps of deploying new Staging release.
 ![StgJob1](./images/Stage_Pipeline_Job1.png)
 ![StgJob2](./images/Stage_Pipeline_Job2.png)
 
