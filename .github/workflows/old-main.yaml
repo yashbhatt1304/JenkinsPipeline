@@ -58,14 +58,14 @@ jobs:
               console.log(`Tag ${tagName} exists:`, tag.data);
               if (tag.data.refs == tagName) {
                 console.log("From If");
-                # '${{TAG_EXISTS}} = true';
+                # '${{env.TAG_EXISTS}} = true';
               } else {
-                # '${{TAG_EXISTS}} = false';
+                # '${{env.TAG_EXISTS}} = false';
                 console.log("From else");
             } catch (error) {
               if (error.status === 404) {
                 console.log(`Tag ${tagName} does not exist`);
-                # '${{TAG_EXISTS}} = false';
+                # '${{env.TAG_EXISTS}} = false';
               } else {
                 throw error;
               }
