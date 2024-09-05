@@ -57,10 +57,9 @@ jobs:
               });
               console.log(`Tag ${tagName} exists:`, tag.data);
               if (tag.data.refs == tagName) {
-                echo "::set-output name=TAG_EXISTS::true"
+                '${{TAG_EXISTS}}' = 'true';
               } else {
-                echo "::set-output name=TAG_EXISTS::false"
-              }
+                '${{TAG_EXISTS}}' = 'false';
             } catch (error) {
               if (error.status === 404) {
                 console.log(`Tag ${tagName} does not exist`);
