@@ -71,7 +71,7 @@ jobs:
             }
 
   prod_deploy:
-    if: ${{ env.TAG_EXISTS == 'true' }}
+    if: ${{ TAG_EXISTS == 'true' }}
     needs: [test, check_tag]
     runs-on: ubuntu-latest
     steps:
@@ -110,7 +110,7 @@ jobs:
             python3 -m flask run
 
   stage-deploy:
-    if: ${{ env.TAG_EXISTS == 'false' }}
+    if: ${{ TAG_EXISTS == 'false' }}
     needs: [test, check_tag]
     runs-on: ubuntu-latest
     steps:
