@@ -18,10 +18,7 @@ pipeline {
             steps {
                 // Example: running a build command, replace with your build tool
                 echo '-------Building app-------'
-            }
-            steps {
                 sh """
-                pip install --upgrade pip
                 pip install flask pytest
                 """
             }
@@ -31,8 +28,6 @@ pipeline {
             steps {
                 // Example: running a test command, replace with your test tool
                 echo '-------Testing app-------'
-            }
-            steps {
                 sh """
                 pytest --disable-warnings -q
                 """
