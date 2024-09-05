@@ -31,5 +31,8 @@ To Implement a CI/CD workflow using GitHub Actions for a Python application.
 ![StgJob1](./images/Stage_Pipeline_Job1.png)
 ![StgJob2](./images/Stage_Pipeline_Job2.png)
 
+## References & Links
+For more details about how to start with Github Workflows follow their [Official Documentation](https://docs.github.com/en/actions/writing-workflows/quickstart)
+
 ## Happy Coding
 Thanks for continuing till the End. :)
