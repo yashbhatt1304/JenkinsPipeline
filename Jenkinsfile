@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     // Triggered by changes in the Git repository
     triggers {
         pollSCM('* * * * *')  // Poll every minute or use webhook for immediate triggers
@@ -16,13 +17,30 @@ pipeline {
         stage('Build') {
             steps {
                 // Example: running a build command, replace with your build tool
-                echo 'building app.'
+                echo '-------Building app-------'
+            }
+            steps {
+                sh """
+                pip install --upgrade pip
+                pip install flask pytest
+                """
             }
         }
+
         stage('Test') {
             steps {
                 // Example: running a test command, replace with your test tool
-                echo 'testing app..'
+                echo '-------Testing app-------'
+            }
+            steps {
+                sh """
+                pytest --disable-warnings -q
+                """
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo '-------Deploying App-------'
             }
         }
     }
@@ -32,6 +50,7 @@ pipeline {
         failure {
             echo 'Build or Tests Failed!'
         }
+
         success {
             echo 'Build and Tests Passed!'
         }
