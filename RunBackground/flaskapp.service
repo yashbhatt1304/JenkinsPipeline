@@ -1,0 +1,14 @@
+[Unit]
+Description=Gunicorn instance to serve my Flask application
+After=network.target
+
+[Service]
+User=your_username
+Group=www-data
+WorkingDirectory=/home/ubuntu/Calculator_flask/app
+Environment="PATH=/home/ubuntu/.local/bin"
+ExecStart=/home/ubuntu/.local/bin/flask --workers 3 --bind 0.0.0.0:5000 app
+
+[Install]
+WantedBy=multi-user.target
+

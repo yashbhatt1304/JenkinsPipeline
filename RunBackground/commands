@@ -1,0 +1,2 @@
+1. sudo nano /etc/systemd/system/flaskapp.service
+2. systemctl daemon-reload
