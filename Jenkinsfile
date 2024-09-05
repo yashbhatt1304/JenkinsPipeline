@@ -19,7 +19,7 @@ pipeline {
                 // Example: running a build command, replace with your build tool
                 echo '-------Building app-------'
                 sh """
-                pip install flask pytest
+                pip3 install pytest flask
                 """
             }
         }
@@ -29,10 +29,12 @@ pipeline {
                 // Example: running a test command, replace with your test tool
                 echo '-------Testing app-------'
                 sh """
-                pytest --disable-warnings -q
+                cd /var/lib/jenkins/workspace/Jenkins-Pipeline/Calculator_flask/
+                python3 -m pytest app_test.py --disable-warnings -q
                 """
             }
         }
+        
         stage('Deploy') {
             steps {
                 echo '-------Deploying App-------'
