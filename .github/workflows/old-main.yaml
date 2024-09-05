@@ -1,0 +1,155 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - staging
+
+env:
+  TAG_EXISTS: 'false'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x' 
+      
+      - name: Install dependencies
+        run: |
+          echo "------Installing Dependencies------"
+          pip install --upgrade pip
+          pip install flask pytest
+          echo "------Completed Installing Dependencies-------"
+
+      - name: Run tests
+        run: |
+          echo "-------Running Test Script-------"
+          pytest --disable-warnings -q
+
+      - name: Build Application
+        run: |
+          echo "-------Building application-------"
+
+  check_tag:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Check for Tag using GitHub Script
+        id: check_tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const tagName = '${{vars.GIT_TAG}}';
+            try {
+              const tag = await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tagName}`,
+              });
+              console.log(`Tag ${tagName} exists:`, tag.data);
+              if (tag.data.refs == tagName) {
+                console.log("From If");
+                # '${{TAG_EXISTS}} = true';
+              } else {
+                # '${{TAG_EXISTS}} = false';
+                console.log("From else");
+            } catch (error) {
+              if (error.status === 404) {
+                console.log(`Tag ${tagName} does not exist`);
+                # '${{TAG_EXISTS}} = false';
+              } else {
+                throw error;
+              }
+            }
+
+  # prod_deploy:
+  #   if: ${{ TAG_EXISTS == 'true' }}
+  #   needs: [test, check_tag]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checking Poduction Release & Configuring libraries
+  #       uses: appleboy/ssh-action@v1.0.0
+  #       with:
+  #         host: ${{ secrets.EC2_HOST }}
+  #         username: ${{ secrets.EC2_USERNAME }}
+  #         key: ${{ secrets.EC2_SSH_KEY }}
+  #         port: 22
+  #         script: |
+  #           echo "-------This is New Release preparing for production rollout.-------- "
+  #           sudo apt-get update
+  #           sudo apt update
+  #           sudo apt install python -y
+  #           curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+  #           sudo apt install python3-pip -y
+  #           sudo apt install nginx -y
+  #           pip install flask pytest
+
+  #     - name: Deploying App in PROD
+  #       uses: appleboy/scp-action@v0.1.4
+  #       with:
+  #         host: ${{ secrets.EC2_HOST }}
+  #         username: ${{ secrets.EC2_USERNAME }}
+  #         key: ${{ secrets.EC2_SSH_KEY }}
+  #         port: 22
+  #         source: ./
+  #         target: ./
+  #         script: |
+  #           echo "Deploying App in PROD"
+  #           sudo rm -rf  /etc/nginx/sites-available/default
+  #           sudo cp /home/ubuntu/default /etc/nginx/sites-available/
+  #           sudo systemctl restart nginx
+  #           cd /home/ubuntu/Calculator_flask/
+  #           python3 -m flask run
+
+  # stage-deploy:
+  #   if: ${{ TAG_EXISTS == 'false' }}
+  #   needs: [test, check_tag]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checking Stage Release & Configuring libraries
+  #       uses: appleboy/ssh-action@v1.0.0
+  #       with:
+  #         host: ${{ secrets.EC2_HOST_STG }}
+  #         username: ${{ secrets.EC2_USERNAME_STG }}
+  #         key: ${{ secrets.EC2_SSH_KEY_STG }}
+  #         port: 22
+  #         script: |
+  #           echo "-------This is New Release preparing for stage rollout.-------- "
+  #           sudo apt-get update
+  #           sudo apt update
+  #           sudo apt install python -y
+  #           curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+  #           sudo apt install python3-pip -y
+  #           sudo apt install nginx -y
+  #           pip install flask pytest
+
+  #     - name: Deploying App in STAGE
+  #       uses: appleboy/scp-action@v0.1.4
+  #       with:
+  #         host: ${{ secrets.EC2_HOST_STG }}
+  #         username: ${{ secrets.EC2_USERNAME_STG }}
+  #         key: ${{ secrets.EC2_SSH_KEY_STG }}
+  #         port: 22
+  #         source: ./
+  #         target: ./
+  #         script: |
+  #           echo "Deploying App in STAGE"
+  #           sudo rm -rf  /etc/nginx/sites-available/default
+  #           sudo cp /home/ubuntu/default /etc/nginx/sites-available/
+  #           sudo systemctl restart nginx
+  #           cd /home/ubuntu/Calculator_flask/
+  #           python3 -m flask run
+
+
+      
+
+          
