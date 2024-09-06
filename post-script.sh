@@ -11,3 +11,5 @@ sudo cp /home/ubuntu/Jenkins-Pipeline/default /etc/nginx/sites-available/
 sudo systemctl restart nginx
 sudo chmod +x /home/ubuntu/Jenkins-Pipeline/pre-script.sh
 sudo chmod +x /home/ubuntu/Jenkins-Pipeline/post-script.sh
+#cd /home/ubuntu/Jenkins-Pipeline/Calculator_flask/
+#python3 -m flask run
