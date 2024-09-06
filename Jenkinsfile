@@ -6,6 +6,10 @@ pipeline {
         pollSCM('* * * * *')  // Poll every minute or use webhook for immediate triggers
     }
 
+    environment {
+        Host_IP = "3.35.171.60"
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -40,8 +44,8 @@ pipeline {
                 echo '-------Deploying App-------'
                 sshagent(['EC2']) {
                     sh """
-                    scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/workspace/Jenkins-Pipeline/ ubuntu@3.34.127.225:/home/ubuntu/
-                    ssh -o StrictHostKeyChecking=no ubuntu@3.34.127.225 ./Jenkins-Pipeline/script.sh
+                    scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/workspace/Jenkins-Pipeline/ ubuntu@${env.HOST_IP}:/home/ubuntu/
+                    ssh -o StrictHostKeyChecking=no ubuntu@${env.HOST_IP} ./Jenkins-Pipeline/script.sh
                     """
                 }
             }
