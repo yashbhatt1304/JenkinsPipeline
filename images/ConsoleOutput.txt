@@ -1,0 +1,149 @@
+Started by an SCM change
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/Jenkins-Pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout Code)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/Jenkins-Pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/yashbhatt1304/JenkinsPipeline.git # timeout=10
+Fetching upstream changes from https://github.com/yashbhatt1304/JenkinsPipeline.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.34.1'
+ > git fetch --tags --force --progress -- https://github.com/yashbhatt1304/JenkinsPipeline.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/jenkins^{commit} # timeout=10
+Checking out Revision 4afa2958ef3e3e417c450b1349da1b93907b7c37 (refs/remotes/origin/jenkins)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 4afa2958ef3e3e417c450b1349da1b93907b7c37 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D jenkins # timeout=10
+ > git checkout -b jenkins 4afa2958ef3e3e417c450b1349da1b93907b7c37 # timeout=10
+Commit message: "Updating Readme file"
+ > git rev-list --no-walk 69bb9b90662d014719918294f793a8e10192471d # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] echo
+-------Building app-------
+[Pipeline] sh
++ pip3 install pytest flask
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: pytest in /var/lib/jenkins/.local/lib/python3.10/site-packages (8.3.2)
+Requirement already satisfied: flask in /var/lib/jenkins/.local/lib/python3.10/site-packages (3.0.3)
+Requirement already satisfied: exceptiongroup>=1.0.0rc8 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from pytest) (1.2.2)
+Requirement already satisfied: packaging in /var/lib/jenkins/.local/lib/python3.10/site-packages (from pytest) (24.1)
+Requirement already satisfied: tomli>=1 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from pytest) (2.0.1)
+Requirement already satisfied: iniconfig in /var/lib/jenkins/.local/lib/python3.10/site-packages (from pytest) (2.0.0)
+Requirement already satisfied: pluggy<2,>=1.5 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from pytest) (1.5.0)
+Requirement already satisfied: itsdangerous>=2.1.2 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from flask) (2.2.0)
+Requirement already satisfied: Jinja2>=3.1.2 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from flask) (3.1.4)
+Requirement already satisfied: Werkzeug>=3.0.0 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from flask) (3.0.4)
+Requirement already satisfied: click>=8.1.3 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from flask) (8.1.7)
+Requirement already satisfied: blinker>=1.6.2 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from flask) (1.8.2)
+Requirement already satisfied: MarkupSafe>=2.0 in /var/lib/jenkins/.local/lib/python3.10/site-packages (from Jinja2>=3.1.2->flask) (2.1.5)
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Test)
+[Pipeline] echo
+-------Testing app-------
+[Pipeline] sh
++ cd /var/lib/jenkins/workspace/Jenkins-Pipeline/Calculator_flask/
++ python3 -m pytest app_test.py --disable-warnings -q
+.                                                                        [100%]
+1 passed in 0.14s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy)
+[Pipeline] echo
+-------Deploying App-------
+[Pipeline] sshagent
+[ssh-agent] Using credentials ubuntu
+$ ssh-agent
+SSH_AUTH_SOCK=/tmp/ssh-XXXXXXuOK2mC/agent.28171
+SSH_AGENT_PID=28174
+Running ssh-add (command line suppressed)
+Identity added: /var/lib/jenkins/workspace/Jenkins-Pipeline@tmp/private_key_7290416420223440981.key (/var/lib/jenkins/workspace/Jenkins-Pipeline@tmp/private_key_7290416420223440981.key)
+[ssh-agent] Started.
+[Pipeline] {
+[Pipeline] sh
++ ssh -o StrictHostKeyChecking=no ubuntu@3.35.171.60 ./Jenkins-Pipeline/pre-script.sh
++ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/workspace/Jenkins-Pipeline/ ubuntu@3.35.171.60:/home/ubuntu/
++ ssh -o StrictHostKeyChecking=no ubuntu@3.35.171.60 ./Jenkins-Pipeline/post-script.sh
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Hit:1 http://ap-northeast-2.ec2.archive.ubuntu.com/ubuntu jammy InRelease
+Hit:2 http://ap-northeast-2.ec2.archive.ubuntu.com/ubuntu jammy-updates InRelease
+Hit:3 http://ap-northeast-2.ec2.archive.ubuntu.com/ubuntu jammy-backports InRelease
+Get:4 http://security.ubuntu.com/ubuntu jammy-security InRelease [129 kB]
+Fetched 129 kB in 2s (81.5 kB/s)
+Reading package lists...
+Building dependency tree...
+Reading state information...
+48 packages can be upgraded. Run 'apt list --upgradable' to see them.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+nginx is already the newest version (1.18.0-6ubuntu14.4).
+0 upgraded, 0 newly installed, 0 to remove and 48 not upgraded.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+python3 is already the newest version (3.10.6-1~22.04.1).
+0 upgraded, 0 newly installed, 0 to remove and 48 not upgraded.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+python3-pip is already the newest version (22.0.2+dfsg-1ubuntu0.4).
+0 upgraded, 0 newly installed, 0 to remove and 48 not upgraded.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+python3-flask is already the newest version (2.0.1-2ubuntu1.1).
+0 upgraded, 0 newly installed, 0 to remove and 48 not upgraded.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+python3-pytest is already the newest version (6.2.5-1ubuntu2).
+0 upgraded, 0 newly installed, 0 to remove and 48 not upgraded.
+[Pipeline] }
+$ ssh-agent -k
+unset SSH_AUTH_SOCK;
+unset SSH_AGENT_PID;
+echo Agent pid 28174 killed;
+[ssh-agent] Stopped.
+[Pipeline] // sshagent
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] echo
+Build and Tests Passed!
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
