@@ -7,5 +7,5 @@ sudo apt install python3-pip -y
 sudo apt install python3-flask -y
 sudo apt install python3-pytest -y
 sudo rm -rf  /etc/nginx/sites-available/default
-sudo cp /var/lib/jenkins/workspace/Jenkins-Pipeline/default /etc/nginx/sites-available/
+sudo cp /home/ubuntu/Jenkins-Pipeline/default /etc/nginx/sites-available/
 sudo systemctl restart nginx
