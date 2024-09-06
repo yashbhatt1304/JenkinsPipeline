@@ -45,7 +45,7 @@ pipeline {
                 sshagent(['EC2']) {
                     sh """
                     scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/workspace/Jenkins-Pipeline/ ubuntu@${env.HOST_IP}:/home/ubuntu/
-                    ssh -o StrictHostKeyChecking=no ubuntu@${env.HOST_IP} ./Jenkins-Pipeline/script.sh
+                    ssh -o StrictHostKeyChecking=no ubuntu@${env.HOST_IP} ./Jenkins-Pipeline/post-script.sh
                     """
                 }
             }
