@@ -18,9 +18,12 @@ To set up a Jenkins pipeline that automates the testing and deployment of a simp
 > sudo apt install python3-pytest
 > sudo apt install python3-pip
 4. Create a new pipeline project from Jenkins dashboard and choose pipeline script.
-5. Copy paste the code from **Jenkinsfile** in the pipeline script.
-6. The pipeline will trigger everytime when there is push on jenkins branch and deploy the application following building and testing of the application.
-
+5. Make sure SSH Agent plugin is installed in Jenkins.
+6. Copy paste the code from **Jenkinsfile** in the pipeline script.
+7. Configure the secrets in Jenkins having SSH key for the server where the Application needs to deploy and made the necessary change in pipeline(jenkinsfile) for the same.
+8. File with name **default** is present in the directory for configuring reverse proxy using nginx.
+9. The pipeline will trigger everytime when there is push on jenkins branch and deploy the application following building and testing of the application.
+10. Make sure **pre-script.sh** and **post-script.sh** have the executable permission on the server wherever the application needs to deploy for the first time and for later on the scripts will handle this.
 
 ## References & Links
 
