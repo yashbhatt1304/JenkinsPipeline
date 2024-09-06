@@ -41,19 +41,7 @@ pipeline {
                 sshagent(['EC2']) {
                     sh """
                     scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/workspace/Jenkins-Pipeline/ ubuntu@3.34.127.225:/home/ubuntu/
-                    ssh -o StrictHostKeyChecking=no ubuntu@3.34.127.225 << EOF
-                        sudo apt update -y
-                        sudo apt install nginx -y
-                        sudo apt install python3 -y
-                        sudo apt install python3-pip -y
-                        sudo apt install python3-flask -y
-                        sudo apt install python3-pytest -y
-                        sudo rm -rf  /etc/nginx/sites-available/default
-                        sudo cp /var/lib/jenkins/workspace/Jenkins-Pipeline/default /etc/nginx/sites-available/
-                        sudo systemctl restart nginx
-                        cd /home/ubuntu/Calculator_flask/
-                        python3 -m flask run > app.log
-                    EOF
+                    ssh -o StrictHostKeyChecking=no ubuntu@3.34.127.225 ./Jenkins-Pipeline/script.sh
                     """
                 }
             }
