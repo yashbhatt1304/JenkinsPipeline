@@ -24,6 +24,11 @@ To set up a Jenkins pipeline that automates the testing and deployment of a simp
 8. File with name **default** is present in the directory for configuring reverse proxy using nginx.
 9. The pipeline will trigger everytime when there is push on jenkins branch and deploy the application following building and testing of the application.
 10. Make sure **pre-script.sh** and **post-script.sh** have the executable permission on the server wherever the application needs to deploy for the first time and for later on the scripts will handle this.
+11. Lookout for success logs in [**ConsoleOutput.txt**](./images/ConsoleOutput.txt) for the pipeline.
+12. Jenkins Dashboard or our pipeline looks like this.
+![Jenkins Dashboard](./images/JenkinsDashboard.png)
+13. Application after deploying to the server looks like.
+![Calculator App](./images/CalculatorApp.png)
 
 ## References & Links
 
